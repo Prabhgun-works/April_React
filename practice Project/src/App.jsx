@@ -1,5 +1,7 @@
 import {  useState } from "react";
 import Home from './components/home.jsx';
+import Notifications from "./components/Notifications.jsx";
+import Form from "./components/FormHandle.jsx";
 import './App.css';
 export default function App() {
     const [userName , setUserName] = useState("");
@@ -16,8 +18,9 @@ return(
         <button onClick={nextPage}>Submit</button>
         
         {showChild &&<Home name={userName}/>}
+        <Notifications/>
        {/* was missing a wrapper for condition.*/}
-      
+      <Form/>
       
         
     </div>
