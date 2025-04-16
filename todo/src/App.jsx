@@ -43,6 +43,7 @@ const App = () => {
         <div style={{ marginTop: '10px' }}>
           <button onClick={() => dispatch(prevTask())} disabled={!current?.prev}>⬅️ Prev</button>
           <button onClick={() => dispatch(nextTask())} disabled={!current?.next}>Next ➡️</button>
+          <h3>Git</h3>
         </div>
       </div>
     </div>
