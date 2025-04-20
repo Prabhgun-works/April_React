@@ -1,38 +1,49 @@
-// App.js
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addTask, toggleTask, deleteTask, nextTask, prevTask } from './store';
+import Tabs from './components/Tabs';
 import './App.css'
-
 const App = () => {
   const [input, setInput] = useState('');
-  const tasks = useSelector((state) => state.tasks.list);
-  const currentId = useSelector((state) => state.tasks.current);
-  const current = tasks[currentId];
-  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
 
-  const handleAdd = () => {
+  const dispatch = useDispatch();
+  const currentId = useSelector((state) => state.tasks.current);
+  const tasks = useSelector((state) => state.tasks.list);
+  const current = tasks[currentId];
+
+  let all = [];
+  let temp = currentId;
+  let seen = new Set();
+
+  while (temp !== null && !seen.has(temp)) {
+    all.push({ id: temp, ...tasks[temp] });
+    seen.add(temp);
+    temp = tasks[temp]?.next;
+  }
+
+  const completed = all.filter(t => t.completed);
+  const incompleted = all.filter(t => !t.completed);
+
+  const add = () => {
     if (input.trim()) {
       dispatch(addTask(input));
       setInput('');
+      setShowModal(true);
     }
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>📝 Linked List Todo App</h2>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Add new task..."
-      />
-      <button onClick={handleAdd}>Add</button>
+    <div style={{ padding: 20 }}>
+      <h2>Todo App 🚀</h2>
+      <input value={input} onChange={e => setInput(e.target.value)} placeholder="Write task..." />
+      <button onClick={add}>Add</button>
 
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: 20 }}>
         {current ? (
           <>
             <h3>{current.text}</h3>
-            <p>Status: {current.completed ? '✅ Completed' : '❌ Incomplete'}</p>
+            <p>{current.completed ? '✅ Done' : '❌ Not Done'}</p>
             <button onClick={() => dispatch(toggleTask())}>Toggle</button>
             <button onClick={() => dispatch(deleteTask())}>Delete</button>
           </>
@@ -40,21 +51,15 @@ const App = () => {
           <p>No tasks</p>
         )}
 
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={() => dispatch(prevTask())} disabled={!current?.prev}>⬅️ Prev</button>
-          <button onClick={() => dispatch(nextTask())} disabled={!current?.next}>Next ➡️</button>
-          <h3>Git</h3>
+        <div>
+          <button onClick={() => dispatch(prevTask())} disabled={!current?.prev}>⬅️</button>
+          <button onClick={() => dispatch(nextTask())} disabled={!current?.next}>➡️</button>
         </div>
       </div>
+
+        <Tabs showModal={showModal} setShowModal={setShowModal}/>
     </div>
   );
 };
 
 export default App;
-
-// Want to Add Later?
-// localStorage persistence?
-
-// Task counter or list view?
-
-// DSA enhancements (stack for undo, priority queue, etc.)?
